@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Morse code ok</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #292D2F;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+						color: #ded;
+        }
+
+        .box {
+            background: #171F21 ;
+            padding: 30px;
+            border-radius: 12px;
+            width: 350px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            height: fit-content;
+            text-align: center;
+        }
+
+        .cheat-sheet {
+            background: #171F21;
+            padding: 20px;
+            border-radius: 12px;
+            width: 280px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        button#tapBtn {
+            font-size: 22px;
+            padding: 25px 50px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            user-select: none;
+            margin: 15px 0;
+            outline: none;
+            font-weight: bold;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button#tapBtn:active {
+            background: #1e7e34;
+        }
+
+        .output {
+            font-size: 18px;
+            margin-top: 10px;
+            word-break: break-all;
+            min-height: 35px;
+            background: #474747;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #222;
+            text-align: left;
+            font-family: monospace;
+        }
+
+        .current {
+            font-size: 24px;
+            font-weight: bold;
+            color: #7Ef8b9;
+            text-align: center;
+            letter-spacing: 3px;
+        }
+
+        h3 {
+            margin: 15px 0 5px 0;
+            font-size: 14px;
+            color: #bbb;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .utility-btn {
+            font-size: 14px;
+            padding: 10px 16px;
+            background: #264;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: auto;
+        }
+
+        .utility-btn:hover {
+            background: #375;
+        }
+
+        .special-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .special-buttons button {
+            flex: 1;
+            margin-top: 0;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: #325144;
+            border: 1px solid #000;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .item:hover {
+            background: #426154;
+        }
+
+        .item .letter {
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            color: #ddf7dd;
+        }
+
+        .item .code {
+            color: #a6ffbb;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+
+<style>
+#communicator {
+    width: 350px;
+    background: #171F21;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    height: fit-content;
+}
+#communicator input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #292D2F;
+    color: #fff;
+    margin: 8px 0;
+    font-family: monospace;
+    text-transform: uppercase;
+}
+.comm-row {
+    display: flex;
+    gap: 8px;
+}
+.comm-row button {
+    flex: 1;
+}
+#roomCode {
+    font-size: 24px;
+    font-family: monospace;
+    letter-spacing: 3px;
+    color: #7Ef8b9;
+    background: #474747;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+    user-select: all;
+}
+#connectionStatus {
+    padding: 8px;
+    border-radius: 6px;
+    background: #474747;
+    margin: 10px 0;
+}
+.incoming {
+    background: #474747;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 8px;
+    min-height: 35px;
+    word-break: break-all;
+    font-family: monospace;
+}
+.small-label {
+    font-size: 12px;
+    color: #bbb;
+    text-align: left;
+    text-transform: uppercase;
+    margin-top: 12px;
+}
+</style>
+
+<div id="communicator">
+    <h2 style="margin-top:0;">Morse Communicator</h2>
+
+    <div class="small-label">Your room code</div>
+    <div id="roomCode">--------</div>
+    <button class="utility-btn" id="copyRoomBtn">copy room code</button>
+
+    <div class="small-label">Join someone's room</div>
+    <input id="joinCode" placeholder="ENTER ROOM CODE" maxlength="12">
+    <div class="comm-row">
+        <button class="utility-btn" id="joinBtn">JOIN</button>
+        <button class="utility-btn" id="newRoomBtn">NEW ROOM</button>
+    </div>
+
+    <div id="connectionStatus">⚪ Not connected</div>
+
+    <div class="small-label">Them — Morse</div>
+    <div class="incoming" id="remoteMorse"></div>
+
+    <div class="small-label">Them — translated</div>
+    <div class="incoming" id="remoteText"></div>
+
+    <div style="font-size:11px;color:#888;margin-top:12px;text-align:left;">
+        Share your room code with the other person. Both people must keep this page open.
+    </div>
+</div>
+
+
+<!-- Основной блок переводчика -->
+<div class="box">
+
+    <h2>Gboard morse code translator</h2>
+
+    <button id="tapBtn">press and hold</button>
+
+    <!-- SPACE and / buttons -->
+    <div class="special-buttons">
+        <button id="spaceBtn" class="utility-btn">
+            SPACE
+        </button>
+    </div>
+
+    <h3>Current symbol:</h3>
+    <div id="morseOut" class="output current"></div>
+
+    <h3>Morse:</h3>
+    <div id="historyOut" class="output"></div>
+
+    <h3>Translated:</h3>
+    <div id="textOut"
+         class="output"
+         style="font-family: Arial, sans-serif; font-weight: bold;">
+    </div>
+
+    <button id="clearBtn" class="utility-btn">
+        clear
+    </button>
+
+</div>
+
+
+<!-- Блок шпаргалки -->
+<div class="cheat-sheet">
+
+    <h2 style="margin-top: 0; font-size: 20px; text-align: center;">
+        cheatsheet
+    </h2>
+
+    <p style="font-size: 12px; color: #666; margin-top: -5px; text-align: center;">
+        press a letter to listen to it
+    </p>
+
+    <div class="grid" id="cheatGrid"></div>
+
+</div>
+
+
+<script>
+
+    const morseMap = {
+        '.-': 'A',
+        '-...': 'B',
+        '-.-.': 'C',
+        '-..': 'D',
+        '.': 'E',
+        '..-.': 'F',
+        '--.': 'G',
+        '....': 'H',
+        '..': 'I',
+        '.---': 'J',
+        '-.-': 'K',
+        '.-..': 'L',
+        '--': 'M',
+        '-.': 'N',
+        '---': 'O',
+        '.--.': 'P',
+        '--.-': 'Q',
+        '.-.': 'R',
+        '...': 'S',
+        '-': 'T',
+        '..-': 'U',
+        '...-': 'V',
+        '.--': 'W',
+        '-..-': 'X',
+        '-.--': 'Y',
+        '--..': 'Z',
+
+        '.----': '1',
+        '..---': '2',
+        '...--': '3',
+        '....-': '4',
+        '.....': '5',
+        '-....': '6',
+        '--...': '7',
+        '---..': '8',
+        '----.': '9',
+        '-----': '0',
+
+        '..--..': '?',
+        '.-.-.-': '.',
+        '--..--': ',',
+        '---...': ':',
+        '...-.': '*',
+        '-.-.--': '!',
+        '-.-.-.': ';',
+        '.-.-.': '+',
+        '-....-': '-',
+        '-...-': '=',
+        '.-..-.': '"',
+        '-.--.': '(',
+        '-.--.-': ')',
+        '.----.': "'",
+        '..--.-': '_',
+        '.--.-.': '@',
+        '.-...': '&',
+        '-.-.-': '\\',
+        '-..-.': '/',
+        '---.-': '%',
+        '--.-.': '#',
+        '--.-.-': '|',
+        '......': '^',
+        '.---..': '~',
+        '-..-.-': '`',
+        '...-..': '$',
+        '.--..': '[',
+        '.--..-': ']',
+        '.--.-': '{',
+        '.--.--': '}',
+        '-.---': '<',
+        '-.----': '>',
+        '..--': ' '
+    };
+
+
+    let pressTime = 0;
+    let currentMorse = '';
+    let morseHistory = '';
+    let translatedText = '';
+
+    let spaceTimer = null;
+    let letterTimer = null;
+
+
+    // =========================
+    // AUDIO
+    // =========================
+
+    let audioCtx = null;
+    let oscillator = null;
+    let gainNode = null;
+
+
+    function initAudio() {
+
+        if (!audioCtx) {
+            audioCtx =
+                new (window.AudioContext ||
+                     window.webkitAudioContext)();
+        }
+
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+
+    function startTone() {
+
+        initAudio();
+
+        oscillator = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+
+        oscillator.frequency.setValueAtTime(
+            600,
+            audioCtx.currentTime
+        );
+
+        gainNode.gain.setValueAtTime(
+            0.1,
+            audioCtx.currentTime
+        );
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+    }
+
+
+    function stopTone() {
+
+        if (oscillator) {
+
+            oscillator.stop();
+            oscillator.disconnect();
+
+            oscillator = null;
+        }
+    }
+
+
+    // =========================
+    // PLAY MORSE
+    // =========================
+
+    async function playMorseSequence(sequence) {
+
+        initAudio();
+
+        const dotDuration = 50;
+        const dashDuration = 120;
+        const pauseDuration = 50;
+
+        for (let char of sequence) {
+
+            startTone();
+
+            const duration =
+                char === '.'
+                    ? dotDuration
+                    : dashDuration;
+
+            await new Promise(resolve =>
+                setTimeout(resolve, duration)
+            );
+
+            stopTone();
+
+            await new Promise(resolve =>
+                setTimeout(resolve, pauseDuration)
+            );
+        }
+    }
+
+
+    // =========================
+    // CHEATSHEET
+    // =========================
+
+    const cheatGrid =
+        document.getElementById('cheatGrid');
+
+
+    Object.keys(morseMap).forEach(code => {
+
+        const letter = morseMap[code];
+
+        const item =
+            document.createElement('div');
+
+        item.className = 'item';
+
+        item.innerHTML =
+            `<span class="letter">${letter}</span>
+             <span class="code">${code}</span>`;
+
+        item.addEventListener(
+            'click',
+            () => playMorseSequence(code)
+        );
+
+        cheatGrid.appendChild(item);
+    });
+
+
+    // =========================
+    // ELEMENTS
+    // =========================
+
+    const btn =
+        document.getElementById('tapBtn');
+
+    const spaceBtn =
+        document.getElementById('spaceBtn');
+
+    const clearBtn =
+        document.getElementById('clearBtn');
+
+    const morseOut =
+        document.getElementById('morseOut');
+
+    const historyOut =
+        document.getElementById('historyOut');
+
+    const textOut =
+        document.getElementById('textOut');
+
+
+    // =========================
+    // MORSE BUTTON
+    // =========================
+
+    function handlePress(e) {
+
+        if (e) {
+            e.preventDefault();
+        }
+
+        if (pressTime) {
+            return;
+        }
+
+        pressTime = Date.now();
+
+        startTone();
+
+        clearTimeout(letterTimer);
+        clearTimeout(spaceTimer);
+    }
+
+
+    function handleRelease(e) {
+
+        if (e) {
+            e.preventDefault();
+        }
+
+        if (!pressTime) {
+            return;
+        }
+
+        stopTone();
+
+        const duration =
+            Date.now() - pressTime;
+
+        pressTime = 0;
+
+
+        const symbol =
+            duration < 120
+                ? '.'
+                : '-';
+
+
+        currentMorse += symbol;
+        morseHistory += symbol;
+
+        updateDisplay();
+
+
+        clearTimeout(letterTimer);
+
+        letterTimer =
+            setTimeout(
+                translateLetter,
+                350
+            );
+    }
+
+
+    btn.addEventListener(
+        'mousedown',
+        handlePress
+    );
+
+    btn.addEventListener(
+        'touchstart',
+        handlePress,
+        { passive: false }
+    );
+
+    btn.addEventListener(
+        'mouseup',
+        handleRelease
+    );
+
+    btn.addEventListener(
+        'mouseleave',
+        handleRelease
+    );
+
+    btn.addEventListener(
+        'touchend',
+        handleRelease,
+        { passive: false }
+    );
+
+
+    // =========================
+    // TRANSLATE LETTER
+    // =========================
+
+    function translateLetter() {
+
+        if (currentMorse !== '') {
+
+            if (morseMap[currentMorse]) {
+
+                translatedText +=
+                    morseMap[currentMorse];
+
+            }
+
+            currentMorse = '';
+
+            morseHistory += ' ';
+        }
+
+        updateDisplay();
+    }
+
+
+    // =========================
+    // SPACE
+    // =========================
+
+    function translateSpace() {
+
+        // Finish current Morse letter first
+        translateLetter();
+
+
+        if (
+            translatedText.length > 0 &&
+            !translatedText.endsWith(' ')
+        ) {
+
+            translatedText += ' ';
+
+            // Morse word separator
+            morseHistory += '/ ';
+
+            updateDisplay();
+        }
+    }
+
+
+    // =========================
+    // SLASH
+    // =========================
+
+    function addSlash() {
+
+        // Finish current Morse letter first
+        translateLetter();
+
+
+        translatedText += '/';
+
+        morseHistory += '/ ';
+
+        updateDisplay();
+    }
+
+
+    // =========================
+    // BUTTONS
+    // =========================
+
+    spaceBtn.addEventListener(
+        'click',
+        translateSpace
+    );
+
+
+    // =========================
+    // DISPLAY
+    // =========================
+
+    function updateDisplay() {
+
+        morseOut.textContent =
+            currentMorse;
+
+        historyOut.textContent =
+            morseHistory;
+
+        textOut.textContent =
+            translatedText;
+    }
+
+
+    // =========================
+    // CLEAR
+    // =========================
+
+    clearBtn.addEventListener(
+        'click',
+        () => {
+
+            currentMorse = '';
+            morseHistory = '';
+            translatedText = '';
+
+            clearTimeout(letterTimer);
+            clearTimeout(spaceTimer);
+
+            stopTone();
+
+            pressTime = 0;
+
+            updateDisplay();
+        }
+    );
+
+
+    // Initial display
+    updateDisplay();
+
+</script>
+
+
+<script>
+/* =========================
+   MORSE COMMUNICATOR
+   =========================
+   WebRTC carries the Morse data directly between the two browsers.
+   A small WebSocket signaling service is only used to introduce the peers.
+*/
+
+const SIGNAL_URL = "wss://ws.postman-echo.com/raw";
+let signalSocket = null;
+let peer = null;
+let dataChannel = null;
+let roomCodeValue = "";
+let remoteMorseValue = "";
+let remoteTextValue = "";
+
+const roomCodeEl = document.getElementById("roomCode");
+const joinCodeEl = document.getElementById("joinCode");
+const joinBtnEl = document.getElementById("joinBtn");
+const newRoomBtnEl = document.getElementById("newRoomBtn");
+const copyRoomBtnEl = document.getElementById("copyRoomBtn");
+const connectionStatusEl = document.getElementById("connectionStatus");
+const remoteMorseEl = document.getElementById("remoteMorse");
+const remoteTextEl = document.getElementById("remoteText");
+
+function makeRoomCode() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let out = "";
+    for (let i = 0; i < 8; i++) {
+        out += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return out;
+}
+
+function setConnectionStatus(text) {
+    connectionStatusEl.textContent = text;
+}
+
+function showRemoteMorse(value) {
+    remoteMorseValue = value;
+    remoteMorseEl.textContent = value;
+}
+
+function showRemoteText(value) {
+    remoteTextValue = value;
+    remoteTextEl.textContent = value;
+}
+
+function createPeer(initiator) {
+    peer = new RTCPeerConnection({
+        iceServers: [
+            { urls: "stun:stun.l.google.com:19302" },
+            { urls: "stun:stun.cloudflare.com:3478" }
+        ]
+    });
+
+    peer.onconnectionstatechange = () => {
+        const s = peer.connectionState;
+        if (s === "connected") {
+            setConnectionStatus("🟢 Connected");
+        } else if (s === "connecting") {
+            setConnectionStatus("🟡 Connecting...");
+        } else if (s === "disconnected") {
+            setConnectionStatus("🟠 Disconnected");
+        } else if (s === "failed") {
+            setConnectionStatus("🔴 Connection failed");
+        }
+    };
+
+    peer.onicecandidate = event => {
+        if (event.candidate) {
+            sendSignal({
+                type: "candidate",
+                room: roomCodeValue,
+                candidate: event.candidate
+            });
+        }
+    };
+
+    if (initiator) {
+        dataChannel = peer.createDataChannel("morse");
+        setupDataChannel();
+    } else {
+        peer.ondatachannel = event => {
+            dataChannel = event.channel;
+            setupDataChannel();
+        };
+    }
+}
+
+function setupDataChannel() {
+    if (!dataChannel) return;
+
+    dataChannel.onopen = () => {
+        setConnectionStatus("🟢 Connected");
+    };
+
+    dataChannel.onclose = () => {
+        setConnectionStatus("🟠 Disconnected");
+    };
+
+    dataChannel.onmessage = event => {
+        try {
+            const data = JSON.parse(event.data);
+
+            if (data.type === "symbol") {
+                showRemoteMorse(remoteMorseValue + data.value);
+            }
+
+            if (data.type === "letter") {
+                showRemoteText(remoteTextValue + data.value);
+                showRemoteMorse(remoteMorseValue + " ");
+            }
+
+            if (data.type === "space") {
+                showRemoteText(remoteTextValue + " ");
+                showRemoteMorse(remoteMorseValue + "/ ");
+            }
+
+            if (data.type === "slash") {
+                showRemoteText(remoteTextValue + "/");
+                showRemoteMorse(remoteMorseValue + "/ ");
+            }
+
+            if (data.type === "clear") {
+                showRemoteMorse("");
+                showRemoteText("");
+            }
+        } catch (err) {
+            console.warn("Invalid Morse data:", err);
+        }
+    };
+}
+
+function connectSignaling() {
+    return new Promise((resolve, reject) => {
+        try {
+            signalSocket = new WebSocket(SIGNAL_URL);
+
+            signalSocket.onopen = () => {
+                setConnectionStatus("🟡 Signaling connected");
+                resolve();
+            };
+
+            signalSocket.onerror = () => {
+                setConnectionStatus("🔴 Signaling unavailable");
+                reject(new Error("Signaling server unavailable"));
+            };
+
+            signalSocket.onmessage = async event => {
+                try {
+                    const msg = JSON.parse(event.data);
+
+                    if (msg.room !== roomCodeValue) return;
+
+                    if (msg.type === "offer") {
+                        if (!peer) createPeer(false);
+
+                        await peer.setRemoteDescription(msg.offer);
+                        const answer = await peer.createAnswer();
+                        await peer.setLocalDescription(answer);
+
+                        sendSignal({
+                            type: "answer",
+                            room: roomCodeValue,
+                            answer: peer.localDescription
+                        });
+                    }
+
+                    if (msg.type === "answer" && peer) {
+                        await peer.setRemoteDescription(msg.answer);
+                    }
+
+                    if (msg.type === "candidate" && peer && msg.candidate) {
+                        try {
+                            await peer.addIceCandidate(msg.candidate);
+                        } catch (e) {
+                            console.warn("ICE candidate error:", e);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Signaling message error:", e);
+                }
+            };
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+function sendSignal(data) {
+    if (signalSocket && signalSocket.readyState === WebSocket.OPEN) {
+        signalSocket.send(JSON.stringify(data));
+    }
+}
+
+async function createRoom() {
+    roomCodeValue = makeRoomCode();
+    roomCodeEl.textContent = roomCodeValue;
+
+    if (peer) {
+        peer.close();
+        peer = null;
+        dataChannel = null;
+    }
+
+    try {
+        await connectSignaling();
+        createPeer(true);
+
+        const offer = await peer.createOffer();
+        await peer.setLocalDescription(offer);
+
+        sendSignal({
+            type: "offer",
+            room: roomCodeValue,
+            offer: peer.localDescription
+        });
+
+        setConnectionStatus("🟡 Waiting for someone to join...");
+    } catch (e) {
+        console.error(e);
+        setConnectionStatus("🔴 Could not start room");
+    }
+}
+
+async function joinRoom() {
+    const code = joinCodeEl.value.trim().toUpperCase();
+
+    if (!code) {
+        alert("Enter a room code first.");
+        return;
+    }
+
+    roomCodeValue = code;
+    roomCodeEl.textContent = code;
+
+    if (peer) {
+        peer.close();
+        peer = null;
+        dataChannel = null;
+    }
+
+    try {
+        await connectSignaling();
+        createPeer(false);
+        setConnectionStatus("🟡 Waiting for room owner...");
+    } catch (e) {
+        console.error(e);
+        setConnectionStatus("🔴 Could not connect");
+    }
+}
+
+function sendMorseData(data) {
+    if (dataChannel && dataChannel.readyState === "open") {
+        dataChannel.send(JSON.stringify(data));
+    }
+}
+
+copyRoomBtnEl.addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(roomCodeValue);
+        copyRoomBtnEl.textContent = "copied!";
+        setTimeout(() => copyRoomBtnEl.textContent = "copy room code", 1000);
+    } catch {
+        alert("Your room code is: " + roomCodeValue);
+    }
+});
+
+joinBtnEl.addEventListener("click", joinRoom);
+newRoomBtnEl.addEventListener("click", createRoom);
+
+createRoom();
+
+/* Hook the existing Morse functions into the communicator. */
+const originalHandleRelease = handleRelease;
+handleRelease = function(e) {
+    const wasPressed = !!pressTime;
+
+    if (wasPressed) {
+        const duration = Date.now() - pressTime;
+        const symbol = duration < 120 ? "." : "-";
+        sendMorseData({ type: "symbol", value: symbol });
+    }
+
+    originalHandleRelease(e);
+};
+
+const originalTranslateLetter = translateLetter;
+translateLetter = function() {
+    const before = translatedText;
+    originalTranslateLetter();
+
+    if (translatedText.length > before.length) {
+        const added = translatedText.slice(before.length);
+        sendMorseData({ type: "letter", value: added });
+    }
+};
+
+const originalTranslateSpace = translateSpace;
+translateSpace = function() {
+    originalTranslateSpace();
+    sendMorseData({ type: "space" });
+};
+
+const originalAddSlash = addSlash;
+addSlash = function() {
+    originalAddSlash();
+    sendMorseData({ type: "slash" });
+};
+
+clearBtn.addEventListener("click", () => {
+    sendMorseData({ type: "clear" });
+});
+</script>
+
+</body>
+</html>
